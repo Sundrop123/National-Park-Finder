@@ -1,59 +1,64 @@
-'use strict'
+'use strict';
 
-function formatQueryUrl(queryParam){
-  const npsApi = 'https://developer.nps.gov/api/v1/parks?';
-  const queryString = Object.keys(queryParam).map(key=>encodeURIComponent(key)+'='+encodeURIComponent(queryParam[key])).join('&');
-  return npsApi + queryString
+const apiKey = 'rJT2LIKjSeINJ5c68QGIQ7z620EUldTNl3XqYqni';
+const searchURL = 'https://api.nps.gov/api/v1/parks';
 
-
+function formatQueryParams(params) {
+  const queryItems = Object.keys(params)
+    .map(key => `${key}=${params[key]}`)
+  return queryItems.join('&');
 };
 
-function getResults(stateCode,maxResults=10){
-  const param = {
-    api_key:'4sC0qMZ7q0QFCeSm8v2zJIlMHughxVfGNZU3Np77',
-    stateCode:stateCode,
-    limit:maxResults
-  }
-  const url = formatQueryUrl(param);
-  console.log(url)
+function searchNationalParks(query, maxResults) {
+  console.log('searchNationalParks ran', query, maxResults);
+  const params = {
+    api_key: apiKey,
+    stateCode: query,
+    limit: maxResults,
+  };
+
+  const queryString = formatQueryParams(params)
+  const url = searchURL + '?' + queryString;
+
   fetch(url)
-  .then(response => {
-    if(response.ok){
-      return response.json();
-    }
-    throw new Error(response.statusText)
-  })
-  .then(responseJson=>displayResults(responseJson))
-  .catch(error=>$('.results-list').text(error.message))
-
-};
-
-// display results of API call
-function displayResults(responseJson){
-  $('.results-list').empty();
-  if (responseJson.total === 0){
-    $('.results-list').text('No results for state listed. Try another state.')
-  }
-  else {
-      var i
-      for (i=0;i<responseJson.data.length;i++){
-        console.log(responseJson.data[i].fullName)
-        console.log(responseJson.data[i].description)
-        console.log(responseJson.data[i].url)
-        $('.results-list').append(`<h3><a href =${responseJson.data[i].url}>${responseJson.data[i].fullName}</a></h3><p>${responseJson.data[i].description}</p>`)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
       }
-  }
-  $('section').removeClass('hidden')
+      throw new Error(response.statusText);
+    })
+    .then(responseJson => displayResults(responseJson, maxResults))
+    .catch(error => {
+      $('.results-list').empty();
+      $('#js-error').text(`Something went wrong: ${error.message}`);
+    });
 };
 
-function watchSubmit(){
-  $('form').on('submit',event=>{
+function displayResults(responseJson, maxResults){
+  console.log(responseJson);
+  $('.results-list').empty();
+  for (let i = 0; i < responseJson.data.length & i<maxResults; i++) {
+    $('.results-list').append(
+      `<li><h3>${responseJson.data[i].fullName}</h3>
+      <p>Description: ${responseJson.data[i].description}</p>
+      <a href="${responseJson.data[i].url}">${responseJson.data[i].url}</a>
+      </li>`
+    )
+  };
+  $('.results').removeClass('hidden');
+};
+
+function handleUserSubmit() {
+    console.log('handleUserSubmit ran');
+  $('.search-form').submit(event => {
     event.preventDefault();
-    const stateCode = $('.state-code').val();
-    const maxResults = $('.max-results').val();
-    getResults(stateCode,maxResults)
+    const searchTerm = $('#state-input').val();
+    const maxResults = $('#max-results-input').val();
+    searchNationalParks(searchTerm, maxResults || 10);
   });
-  
 };
 
-$(watchSubmit);
+$(function() {
+  console.log('App loaded, awaiting user submit');
+  handleUserSubmit();
+});
