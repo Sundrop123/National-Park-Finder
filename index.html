@@ -1,26 +1,40 @@
 <!DOCTYPE html>
-<html lang='en'>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>National Parks Finder</title>
-        <link rel="stylesheet" href="main.css">
-        <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
-        <script src="index.js"></script>
-    </head>
-    <body>
-        <h1>National Parks Finder</h1>
-        <form class='form'>
-            <label for='state-code'>Enter 2-letter state code(s), separated by a comma</label><br>
-            <input type=text class='state-code' name='state-code'><br>
-            <label for='max-results'>Enter maximum number of results</label><br>
-            <input type=number class='max-results' name='max-results' value=10 min=1><br>
-            <input type=submit value='Go!'>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>NPS API Assignment</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <header role="banner">
+      <h1>Find national parks from each state!</h1>
+      <h2>Search by state or states!</h2>
+    </header>
+
+    <main role="main">
+      <section class="input-form">
+        <form class="search-form">
+          <label for="state-input">State</label>
+          <input id="state-input" placeholder="State codes, separated by commas" required>
+          <label for"max-results-input">Number of Max Results</label>
+          <input id="max-results-input" placeholder="Max results">
+          <input type="submit" value="Search">
         </form>
-        <section class='hidden results'>
-            <h2>Results</h2>
-            <ul class='results-list'></ul>
-        </section>
-    </body>
+      </section>
+
+      <p class="error-message hidden" id="js-error"></p>
+
+      <section class="results hidden">
+        <h2>Search Results</h2>
+        <ul class="results-list">
+        </ul>
+      </section>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
